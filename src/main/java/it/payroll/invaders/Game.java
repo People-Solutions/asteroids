@@ -1,5 +1,6 @@
 package it.payroll.invaders;
 
+import it.payroll.invaders.actors.Enemy;
 import it.payroll.invaders.actors.Ship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +12,15 @@ import java.awt.event.KeyListener;
 
 public class Game extends JFrame implements KeyListener {
 
+    /**
+     * Logger instance
+     */
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
+    public static final int BOARD_WIDTH = 640;
+    public static final int BOARD_HEIGHT = 480;
+
     private GameBoard gameBoard;
-    private Ship ship;
 
     /**
      *
@@ -23,14 +29,17 @@ public class Game extends JFrame implements KeyListener {
         super();
 
         setTitle("Space Invaders");
-        setSize(640, 480);
+        setSize(BOARD_WIDTH, BOARD_HEIGHT);
         setResizable(false);
         addKeyListener(this);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        ship = new Ship(10, 10, 20, 20);
-        gameBoard = new GameBoard(ship);
-        gameBoard.setPreferredSize(new Dimension(640, 480));
+        Ship myShip = new Ship(10,10, 20, 20);
+        Enemy enemy1 = new Enemy(30, 10, 20, 20);
+        Enemy enemy2 = new Enemy(30, 40, 20, 20);
+
+        gameBoard = new GameBoard(myShip, enemy1, enemy2);
+        gameBoard.setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
 
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
@@ -41,72 +50,40 @@ public class Game extends JFrame implements KeyListener {
         requestFocus();
     }
 
-    private void quit() {
+    public void start() {}
+
+    public void quit() {
+        dispose();
         System.exit(0);
     }
-
-    private void move_left() {
-        logger.debug("Move left");
-        int saveX = ship.x;
-        ship.x -= 10;
-
-        gameBoard.repaint(saveX, ship.y, ship.w, ship.h);
-        gameBoard.repaint(ship.x, ship.y, ship.w, ship.h);
-    }
-
-    private void move_right() {
-        logger.debug("Move right");
-        int saveX = ship.x;
-        ship.x += 10;
-
-        gameBoard.repaint(saveX, ship.y, ship.w, ship.h);
-        gameBoard.repaint(ship.x, ship.y, ship.w, ship.h);
-
-    }
-
-    private void fire() {
-        logger.debug("Fire");
-    }
-
-    private void start_game() {
-        logger.debug("Start game");
-    }
-
-// == KEY LISTENER ================================================================================================
+    // == KEYLISTENER =================================================================================================
 
     @Override
     public void keyTyped(KeyEvent e) {
-    }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        logger.info("KEY PRESSED = " + e.getKeyCode());
+
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_S:
-                start_game();
-                requestFocus();
-                break;
             case KeyEvent.VK_Q:
                 quit();
                 break;
             case KeyEvent.VK_LEFT:
-                move_left();
-                requestFocus();
+                this.gameBoard.moveLeft();
                 break;
             case KeyEvent.VK_RIGHT:
-                move_right();
-                requestFocus();
-                break;
-            case KeyEvent.VK_SPACE:
-                fire();
-                requestFocus();
+                this.gameBoard.moveRight();
                 break;
         }
     }
 
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
 
     // == MAIN ========================================================================================================
 
@@ -118,4 +95,5 @@ public class Game extends JFrame implements KeyListener {
             }
         });
     }
+
 }
