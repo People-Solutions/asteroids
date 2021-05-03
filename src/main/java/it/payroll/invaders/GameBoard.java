@@ -43,6 +43,7 @@ public class GameBoard extends JPanel {
         int new_x = old_x + 10;
         ship.setX(new_x);
 
+        //TODO: Riscrivere repaint deleganto ad oggetto sottostante
         repaint(old_x, ship.getY(), ship.getWidth(), ship.getHeight());
         repaint(new_x, ship.getY(), ship.getWidth(), ship.getHeight());
     }
